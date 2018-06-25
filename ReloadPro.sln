@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27703.2026
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReloadPro", "ReloadPro\ReloadPro.csproj", "{71BCC9C7-0B61-4D09-BC14-9B43E52B5CBA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReloadClient", "ReloadClient\ReloadClient.csproj", "{78A03056-D3E2-423C-90D6-8F476412A08E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{71BCC9C7-0B61-4D09-BC14-9B43E52B5CBA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{71BCC9C7-0B61-4D09-BC14-9B43E52B5CBA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{71BCC9C7-0B61-4D09-BC14-9B43E52B5CBA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{71BCC9C7-0B61-4D09-BC14-9B43E52B5CBA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{78A03056-D3E2-423C-90D6-8F476412A08E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{78A03056-D3E2-423C-90D6-8F476412A08E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{78A03056-D3E2-423C-90D6-8F476412A08E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{78A03056-D3E2-423C-90D6-8F476412A08E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {B10BD3B2-6B27-4641-A1AA-4937DA7C3102}
+	EndGlobalSection
+EndGlobal
