@@ -78,7 +78,7 @@ namespace ReloadClient
         }
         public int CalcSetValue()
         {
-
+            //Calc new Value for various Operation Modes
         }
 
     }
