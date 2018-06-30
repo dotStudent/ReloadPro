@@ -13,7 +13,7 @@ namespace ReloadClient
     public partial class frmReload : Form
     {
         private BusinessLogic Logic;
-        private Log log;
+        private Log log = new Log();
 
         public frmReload()
         {
@@ -148,7 +148,16 @@ namespace ReloadClient
 
         private void btnStop_Click(object sender, EventArgs e)
         {
-            Logic.StopIt();
+            try
+            {
+                Logic.StopIt();
+                gbOPMode.Enabled = true;
+                bgWorker.CancelAsync();
+            }
+            catch (Exception ex)
+            {
+
+            }
         }
         private void cbPorts_SelectedIndexChanged(object sender, EventArgs e)
         {
