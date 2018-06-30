@@ -35,7 +35,7 @@
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.label3 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
-            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.tbSetInterval = new System.Windows.Forms.TextBox();
             this.gbOPMode = new System.Windows.Forms.GroupBox();
             this.rBtnCR = new System.Windows.Forms.RadioButton();
             this.rBtnCP = new System.Windows.Forms.RadioButton();
@@ -74,6 +74,10 @@
             this.groupBox7 = new System.Windows.Forms.GroupBox();
             this.tbError = new System.Windows.Forms.TextBox();
             this.bgWorker = new System.ComponentModel.BackgroundWorker();
+            this.textBox2 = new System.Windows.Forms.TextBox();
+            this.label9 = new System.Windows.Forms.Label();
+            this.cbLog = new System.Windows.Forms.CheckBox();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.groupBox1.SuspendLayout();
             this.gbOPMode.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -81,6 +85,7 @@
             this.groupBox5.SuspendLayout();
             this.groupBox6.SuspendLayout();
             this.groupBox7.SuspendLayout();
+            this.groupBox2.SuspendLayout();
             this.SuspendLayout();
             // 
             // cbPorts
@@ -125,7 +130,7 @@
             // 
             this.groupBox1.Controls.Add(this.label3);
             this.groupBox1.Controls.Add(this.label2);
-            this.groupBox1.Controls.Add(this.textBox1);
+            this.groupBox1.Controls.Add(this.tbSetInterval);
             this.groupBox1.Controls.Add(this.label1);
             this.groupBox1.Controls.Add(this.btnStop);
             this.groupBox1.Controls.Add(this.cbPorts);
@@ -155,14 +160,14 @@
             this.label2.TabIndex = 5;
             this.label2.Text = "Interval:";
             // 
-            // textBox1
+            // tbSetInterval
             // 
-            this.textBox1.Location = new System.Drawing.Point(246, 32);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(74, 20);
-            this.textBox1.TabIndex = 4;
-            this.textBox1.Text = "1000";
-            this.textBox1.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.tbSetInterval.Location = new System.Drawing.Point(246, 32);
+            this.tbSetInterval.Name = "tbSetInterval";
+            this.tbSetInterval.Size = new System.Drawing.Size(74, 20);
+            this.tbSetInterval.TabIndex = 4;
+            this.tbSetInterval.Text = "1000";
+            this.tbSetInterval.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
             // gbOPMode
             // 
@@ -225,6 +230,7 @@
             this.tbSetValue.Name = "tbSetValue";
             this.tbSetValue.Size = new System.Drawing.Size(100, 20);
             this.tbSetValue.TabIndex = 6;
+            this.tbSetValue.Text = "50";
             this.tbSetValue.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
             // groupBox3
@@ -244,9 +250,9 @@
             this.lblUnit.AutoSize = true;
             this.lblUnit.Location = new System.Drawing.Point(175, 36);
             this.lblUnit.Name = "lblUnit";
-            this.lblUnit.Size = new System.Drawing.Size(52, 13);
+            this.lblUnit.Size = new System.Drawing.Size(22, 13);
             this.lblUnit.TabIndex = 8;
-            this.lblUnit.Text = "lblUnitSet";
+            this.lblUnit.Text = "mA";
             // 
             // label4
             // 
@@ -406,9 +412,9 @@
             this.label7.AutoSize = true;
             this.label7.Location = new System.Drawing.Point(175, 64);
             this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(69, 13);
+            this.label7.Size = new System.Drawing.Size(22, 13);
             this.label7.TabIndex = 13;
-            this.label7.Text = "lblUnitVRead";
+            this.label7.Text = "mV";
             // 
             // tbVRead
             // 
@@ -472,9 +478,9 @@
             this.lblShtdwnV.AutoSize = true;
             this.lblShtdwnV.Location = new System.Drawing.Point(175, 36);
             this.lblShtdwnV.Name = "lblShtdwnV";
-            this.lblShtdwnV.Size = new System.Drawing.Size(52, 13);
+            this.lblShtdwnV.Size = new System.Drawing.Size(22, 13);
             this.lblShtdwnV.TabIndex = 8;
-            this.lblShtdwnV.Text = "lblUnitSet";
+            this.lblShtdwnV.Text = "mV";
             // 
             // label14
             // 
@@ -534,11 +540,51 @@
             // 
             this.bgWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bgWorker_DoWork);
             // 
+            // textBox2
+            // 
+            this.textBox2.Location = new System.Drawing.Point(208, 22);
+            this.textBox2.Name = "textBox2";
+            this.textBox2.Size = new System.Drawing.Size(345, 20);
+            this.textBox2.TabIndex = 12;
+            this.textBox2.Text = "C:\\Temp";
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(152, 25);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(50, 13);
+            this.label9.TabIndex = 24;
+            this.label9.Text = "LogPath:";
+            // 
+            // cbLog
+            // 
+            this.cbLog.AutoSize = true;
+            this.cbLog.Location = new System.Drawing.Point(19, 25);
+            this.cbLog.Name = "cbLog";
+            this.cbLog.Size = new System.Drawing.Size(65, 17);
+            this.cbLog.TabIndex = 25;
+            this.cbLog.Text = "Activate";
+            this.cbLog.UseVisualStyleBackColor = true;
+            // 
+            // groupBox2
+            // 
+            this.groupBox2.Controls.Add(this.cbLog);
+            this.groupBox2.Controls.Add(this.textBox2);
+            this.groupBox2.Controls.Add(this.label9);
+            this.groupBox2.Location = new System.Drawing.Point(12, 543);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Size = new System.Drawing.Size(567, 58);
+            this.groupBox2.TabIndex = 26;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = "Logging";
+            // 
             // frmReload
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(593, 550);
+            this.ClientSize = new System.Drawing.Size(593, 611);
+            this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox7);
             this.Controls.Add(this.groupBox6);
             this.Controls.Add(this.groupBox5);
@@ -564,6 +610,8 @@
             this.groupBox6.PerformLayout();
             this.groupBox7.ResumeLayout(false);
             this.groupBox7.PerformLayout();
+            this.groupBox2.ResumeLayout(false);
+            this.groupBox2.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -577,7 +625,7 @@
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.TextBox tbSetInterval;
         private System.Windows.Forms.GroupBox gbOPMode;
         private System.Windows.Forms.RadioButton rBtnCR;
         private System.Windows.Forms.RadioButton rBtnCP;
@@ -616,6 +664,10 @@
         private System.Windows.Forms.TextBox tbResCalc;
         private System.Windows.Forms.Label label15;
         private System.ComponentModel.BackgroundWorker bgWorker;
+        private System.Windows.Forms.TextBox textBox2;
+        private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.CheckBox cbLog;
+        private System.Windows.Forms.GroupBox groupBox2;
     }
 }
 

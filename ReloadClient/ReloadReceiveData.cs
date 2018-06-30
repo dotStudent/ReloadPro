@@ -13,8 +13,34 @@ namespace ReloadClient
         public Decimal VoltageV { get { return Math.Round(Convert.ToDecimal(VoltageMV) / 1000, 2); } }
         public Decimal CurrentMA { get; private set; }
         public Decimal CurrentA { get { return Math.Round(Convert.ToDecimal(CurrentMA) / 1000, 2); } }
-        public Decimal Resistance { get { return Math.Round(Convert.ToDecimal(CurrentMA) / Convert.ToDecimal(VoltageMV), 2); } }
-        public Decimal PowerMW { get { return Math.Round(VoltageMV * CurrentMA, 2); } }
+        public Decimal Resistance
+        {
+            get
+            {
+                if (VoltageMV > 0)
+                {
+                    return Math.Round(Convert.ToDecimal(CurrentMA) / Convert.ToDecimal(VoltageMV), 2);
+                }
+                else
+                {
+                    return Int32.MaxValue;
+                }
+            }
+        }
+        public Decimal PowerMW
+        {
+            get
+            {
+                if (VoltageMV > 0)
+                {
+                    return Math.Round((VoltageV * CurrentA) * 1000, 2);
+                }
+                else
+                {
+                    return 0;
+                }
+            }
+        }
         public Decimal PowerW { get { return Math.Round(PowerMW / 1000, 2); } }
         public string Error { get; private set; }
         public MsgType MessageType {get; private set; }
@@ -32,7 +58,11 @@ namespace ReloadClient
             else if (input.StartsWith("set"))
             {
                 MessageType = MsgType.Set;
-                CurrentMA = Convert.ToDecimal(input.Remove(0, 4));              
+                CurrentMA = Convert.ToDecimal(input.Remove(0, 4));
+                if (VoltageMV == 0)  //Workaround
+                {
+                   // VoltageMV = 1;
+                }
             }
             else if (input.StartsWith("read"))
             {
