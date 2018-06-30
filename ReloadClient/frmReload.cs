@@ -13,6 +13,7 @@ namespace ReloadClient
     public partial class frmReload : Form
     {
         private BusinessLogic Logic;
+        private Log log;
 
         public frmReload()
         {
@@ -43,6 +44,7 @@ namespace ReloadClient
                         Logic.InputValue = Convert.ToInt32(tbSetValue.Text);
                     }
                     FillForm(RMessage);
+                    log.toFile(RMessage.CurrentMA, RMessage.VoltageMV, RMessage.Resistance, RMessage.PowerMW, Logic.CumulatedMWh, Logic.CumulatedMAh);
                 }
 
                 System.Threading.Thread.Sleep(100);

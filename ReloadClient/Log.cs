@@ -15,7 +15,7 @@ namespace ReloadClient
         private bool orgFileDeleted = false;
         StreamWriter log;
 
-        public void toFile(int current, int voltage, int resistance, int power, int cumPower, int cumCurrent)
+        public void toFile(decimal current, decimal voltage, decimal resistance, decimal power, decimal cumPower, decimal cumCurrent)
         {
             string path = LogPath;
             string filename = DateTime.Now.ToString("yyy-MM-dd") + "_reloadPro" + ".log";
