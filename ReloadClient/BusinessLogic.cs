@@ -9,6 +9,7 @@ namespace ReloadClient
 {
     class BusinessLogic
     {
+        #region Getter/Setter
         public int Baudrate { get; set; } = 115200;
         public string[] SerialPorts { get { return Serial.GetPorts(); } }
         public string SetPort { get; set; }
@@ -18,23 +19,28 @@ namespace ReloadClient
         public OperationsMode OpMode { get; set; }
         public int InputValue { get; set; }
         public int ShutdownVoltageMV { get; set; }
-        public Decimal CumulatedMAh { get; set; }
-        public Decimal CumulatedAh { get { return Math.Round(CumulatedMAh / 1000, 2); } }
-        public Decimal CumulatedMWh { get; set; }
-        public Decimal CumulatedWh { get { return Math.Round(CumulatedMWh / 1000, 2); } }
+        public Double CumulatedMAh { get { return Math.Round(CumMAh, 4); } }
+        public Double CumulatedAh { get { return Math.Round(CumulatedMAh / 1000, 2); } }
+        public Double CumulatedMWh { get { return Math.Round(CumMWh, 4); } }
+        public Double CumulatedWh { get { return Math.Round(CumulatedMWh / 1000, 2); } }
+        #endregion
 
+        #region Queues
         public Queue<ReloadReceiveData> ReadMessageQueue;
-        public Queue<ReloadSendData> WriteMessageQueue;
+        //public Queue<ReloadSendData> WriteMessageQueue;
+        #endregion
 
-        public SerialPort ComPort;
+        private SerialPort ComPort;
         private int SetValue;
         private int OldInputValue;
-        private decimal LastMVoltage;
-        private decimal LastMAmpere;
-        private decimal LastResistance;
+        private double LastMVoltage;
+        private double LastMAmpere;
+        private double LastResistance;
         private bool firstRun = true;
+        private Double CumMAh;
+        private Double CumMWh;
 
-
+        #region Public Methods
         public void Start()
         {
             ReadMessageQueue = new Queue<ReloadReceiveData>();
@@ -61,15 +67,18 @@ namespace ReloadClient
                 Stopped = true;
             }
         }
-        void ComPort_DataReceived(object sender, SerialDataReceivedEventArgs e)
+        #endregion
+
+        #region Private Methods
+        private void ComPort_DataReceived(object sender, SerialDataReceivedEventArgs e)
         {
             ReloadReceiveData rd = new ReloadReceiveData(ComPort.ReadLine());
             ReadMessageQueue.Enqueue(rd);
             LastMAmpere = rd.CurrentMA;
             LastMVoltage = rd.VoltageMV;
             LastResistance = rd.Resistance;
-            CumulatedMWh += rd.PowerMW * (SetInterval / 1000 / 3600);
-            CumulatedMAh += rd.CurrentMA * (SetInterval / 1000 / 3600);
+            CumMWh += GetHourlyValues(rd.PowerMW);
+            CumMAh += GetHourlyValues(rd.CurrentMA);
 
             if (rd.MessageType == MsgType.Read)
             {
@@ -77,12 +86,13 @@ namespace ReloadClient
                 {
                     StopIt();
                 }
+                int newValue = CalcSetValue(); //check next Current Value to Set
                 if (InputValue != OldInputValue) // Check if user Changed Input Value
                 {
                     OldInputValue = InputValue;
-                    SetValue = InputValue;
+                    newValue = InputValue;
                 }
-                int newValue = CalcSetValue(); //check next Current Value to Set
+
 
                 if (newValue != -1)
                 {
@@ -90,7 +100,7 @@ namespace ReloadClient
                 }
             }
         }
-        public int CalcFirstInputValue()
+        private int CalcFirstInputValue()
         {
             if (OpMode == OperationsMode.ConstantCurrent)
             {
@@ -101,7 +111,7 @@ namespace ReloadClient
                 return 0; //Set MinCurrent To GetFirstVoltageValue
             }
         }
-        public int CalcSetValue()
+        private int CalcSetValue()
         {
             if (OpMode == OperationsMode.ConstantVoltage)
             {
@@ -128,6 +138,13 @@ namespace ReloadClient
             
             //Calc new Value for various Operation Modes
         }
-
+        private double GetHourlyValues(double value)
+        {
+            double seconds = SetInterval / 1000;
+            double multiplicator = seconds / 3600;
+            double returnValue = value * multiplicator;
+            return returnValue;
+        }
+        #endregion
     }
 }

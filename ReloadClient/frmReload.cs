@@ -14,23 +14,13 @@ namespace ReloadClient
     {
         private BusinessLogic Logic;
         private Log log = new Log();
+        private bool doLog = false;
 
         public frmReload()
         {
             InitializeComponent();
         }
 
-        private void frmReload_Load(object sender, EventArgs e)
-        {
-            Logic = new BusinessLogic();
-            cbPorts.DataSource = Serial.GetPorts();
-        }
-
-        private void frmReload_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            //bgWorker.CancelAsync();
-            Logic.StopIt();
-        }
         #region BackGroundWorker
         private void bgWorker_DoWork(object sender, DoWorkEventArgs e)
         {
@@ -44,11 +34,85 @@ namespace ReloadClient
                         Logic.InputValue = Convert.ToInt32(tbSetValue.Text);
                     }
                     FillForm(RMessage);
-                    log.toFile(RMessage.CurrentMA, RMessage.VoltageMV, RMessage.Resistance, RMessage.PowerMW, Logic.CumulatedMWh, Logic.CumulatedMAh);
+                    if (doLog == true)
+                    {
+                        log.toFile(RMessage.CurrentMA, RMessage.VoltageMV, RMessage.Resistance, RMessage.PowerMW, Logic.CumulatedMWh, Logic.CumulatedMAh);
+                    }
                 }
 
                 System.Threading.Thread.Sleep(100);
             }
+        }
+        #endregion
+
+        #region Events
+        private void btnStart_Click(object sender, EventArgs e)
+        {
+            if (Helper.IsNumeric(tbSetValue.Text) == true)
+            {
+                Logic.InputValue = Convert.ToInt32(tbSetValue.Text);
+                Logic.SetInterval = Convert.ToInt32(tbSetInterval.Text);
+                ConfigureLogging();
+                if (Helper.IsNumeric(tbShtdwnV.Text) == true)
+                {
+                    Logic.ShutdownVoltageMV = Convert.ToInt32(tbShtdwnV.Text);
+                }
+                gbOPMode.Enabled = false;
+                Logic.Start();
+                bgWorker.RunWorkerAsync();
+            }
+        }
+        private void btnStop_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                Logic.StopIt();
+                gbOPMode.Enabled = true;
+                bgWorker.CancelAsync();
+            }
+            catch (Exception ex)
+            {
+
+            }
+        }
+        private void frmReload_Load(object sender, EventArgs e)
+        {
+            Logic = new BusinessLogic();
+            cbPorts.DataSource = Serial.GetPorts();
+        }
+        private void frmReload_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            //bgWorker.CancelAsync();
+            Logic.StopIt();
+        }
+        private void cbPorts_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            Logic.SetPort = cbPorts.SelectedItem.ToString();
+        }
+        #endregion
+
+        #region Helper
+        private void InitializeAndCheck()
+        {
+            #region SetOperationsMode
+            if (rBtnCC.Checked == true)
+            {
+                Logic.OpMode = OperationsMode.ConstantCurrent;
+            }
+            else if (rBtnCV.Checked == true)
+            {
+                Logic.OpMode = OperationsMode.ConstantVoltage;
+            }
+            else if (rBtnCR.Checked == true)
+            {
+                Logic.OpMode = OperationsMode.ConstantResistance;
+            }
+            else if (rBtnCP.Checked == true)
+            {
+                Logic.OpMode = OperationsMode.ConstantPower;
+            }
+            #endregion
+
         }
         private void FillForm(ReloadReceiveData rd)
         {
@@ -111,7 +175,7 @@ namespace ReloadClient
             if (rd.MessageType == MsgType.Read)
             {
                 //tbMessage.SafeInvoke(d => d.Text = tbMessage.Text + Environment.NewLine + rd.CurrentMA + ", " + rd.VoltageMV);
-                tbMessage.SafeInvoke(d => d.Text = "Read: " +rd.CurrentMA + ", " + rd.VoltageMV);
+                tbMessage.SafeInvoke(d => d.Text = "Read: " + rd.CurrentMA + ", " + rd.VoltageMV);
             }
             else if (rd.MessageType == MsgType.Set)
             {
@@ -126,65 +190,30 @@ namespace ReloadClient
                 tbError.SafeInvoke(d => d.Text = "Unknown: " + rd.Error);
             }
         }
-        #endregion
-
-        #region Events
-        private void btnStart_Click(object sender, EventArgs e)
+        private void ConfigureLogging()
         {
-            if (Helper.IsNumeric(tbSetValue.Text) == true)
-            {
-                Logic.InputValue = Convert.ToInt32(tbSetValue.Text);
-                Logic.SetInterval = Convert.ToInt32(tbSetInterval.Text);
-
-                if (Helper.IsNumeric(tbShtdwnV.Text) == true)
-                {
-                    Logic.ShutdownVoltageMV = Convert.ToInt32(tbShtdwnV.Text);
-                }
-                gbOPMode.Enabled = false;
-                Logic.Start();
-                bgWorker.RunWorkerAsync();
+            if (cbLog.Checked == true)
+            { 
+                    log.LogPath = tbLogPath.Text;
+                    log.Append = cbLogAppend.Checked;
             }
-        }
-
-        private void btnStop_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                Logic.StopIt();
-                gbOPMode.Enabled = true;
-                bgWorker.CancelAsync();
-            }
-            catch (Exception ex)
-            {
-
-            }
-        }
-        private void cbPorts_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            Logic.SetPort = cbPorts.SelectedItem.ToString();
         }
         #endregion
-        private void InitializeAndCheck()
-        {
-            #region SetOperationsMode
-            if (rBtnCC.Checked == true)
-            {
-                Logic.OpMode = OperationsMode.ConstantCurrent;
-            }
-            else if (rBtnCV.Checked == true)
-            {
-                Logic.OpMode = OperationsMode.ConstantVoltage;
-            }
-            else if (rBtnCR.Checked == true)
-            {
-                Logic.OpMode = OperationsMode.ConstantResistance;
-            }
-            else if (rBtnCP.Checked == true)
-            {
-                Logic.OpMode = OperationsMode.ConstantPower;
-            }
-            #endregion
 
+        private void cbLog_CheckedChanged(object sender, EventArgs e)
+        {
+            if (cbLog.Checked == true)
+            {
+                doLog = true;
+                cbLogAppend.Enabled = true;
+                tbLogPath.Enabled = true;
+            }
+            else
+            {
+                doLog = false;
+                cbLogAppend.Enabled = false;
+                tbLogPath.Enabled = false;
+            }
         }
     }
 }

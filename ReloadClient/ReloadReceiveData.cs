@@ -9,17 +9,17 @@ namespace ReloadClient
 {
     class ReloadReceiveData
     {
-        public Decimal VoltageMV { get; private set; }
-        public Decimal VoltageV { get { return Math.Round(Convert.ToDecimal(VoltageMV) / 1000, 2); } }
-        public Decimal CurrentMA { get; private set; }
-        public Decimal CurrentA { get { return Math.Round(Convert.ToDecimal(CurrentMA) / 1000, 2); } }
-        public Decimal Resistance
+        public Double VoltageMV { get; private set; }
+        public Double VoltageV { get { return Math.Round(VoltageMV / 1000, 2); } }
+        public Double CurrentMA { get; private set; }
+        public Double CurrentA { get { return Math.Round(CurrentMA / 1000, 2); } }
+        public Double Resistance
         {
             get
             {
                 if (VoltageMV > 0)
                 {
-                    return Math.Round(Convert.ToDecimal(CurrentMA) / Convert.ToDecimal(VoltageMV), 2);
+                    return Math.Round(CurrentMA / VoltageMV, 2);
                 }
                 else
                 {
@@ -27,7 +27,7 @@ namespace ReloadClient
                 }
             }
         }
-        public Decimal PowerMW
+        public Double PowerMW
         {
             get
             {
@@ -41,7 +41,7 @@ namespace ReloadClient
                 }
             }
         }
-        public Decimal PowerW { get { return Math.Round(PowerMW / 1000, 2); } }
+        public Double PowerW { get { return Math.Round(PowerMW / 1000, 2); } }
         public string Error { get; private set; }
         public MsgType MessageType {get; private set; }
         public DateTime TimeStamp { get; private set; }
@@ -58,7 +58,7 @@ namespace ReloadClient
             else if (input.StartsWith("set"))
             {
                 MessageType = MsgType.Set;
-                CurrentMA = Convert.ToDecimal(input.Remove(0, 4));
+                CurrentMA = Convert.ToDouble(input.Remove(0, 4));
                 if (VoltageMV == 0)  //Workaround
                 {
                    // VoltageMV = 1;
@@ -68,9 +68,9 @@ namespace ReloadClient
             {
                 MessageType = MsgType.Read;
                 string[] read = Regex.Split(input, " ");
-                CurrentMA = Convert.ToDecimal(read[1]);
+                CurrentMA = Convert.ToDouble(read[1]);
                 string voltage = read[2];
-                VoltageMV = Convert.ToDecimal(voltage.Replace("\r\n", "").Replace("\r", "").Replace("\n", ""));
+                VoltageMV = Convert.ToDouble(voltage.Replace("\r\n", "").Replace("\r", "").Replace("\n", ""));
             }
             else
             {

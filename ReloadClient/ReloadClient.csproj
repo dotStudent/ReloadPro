@@ -59,9 +59,7 @@
     <Compile Include="Log.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ReloadCom.cs" />
     <Compile Include="ReloadReceiveData.cs" />
-    <Compile Include="ReloadSendData.cs" />
     <Compile Include="Serial.cs" />
     <EmbeddedResource Include="frmReload.resx">
       <DependentUpon>frmReload.cs</DependentUpon>

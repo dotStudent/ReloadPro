@@ -9,13 +9,13 @@ namespace ReloadClient
 {
     class Log
     {
-        static string LogPath { get; set; }
-        static bool Append { get; set; }
+        public string LogPath { get; set; }
+        public bool Append { get; set; }
 
         private bool orgFileDeleted = false;
         StreamWriter log;
 
-        public void toFile(decimal current, decimal voltage, decimal resistance, decimal power, decimal cumPower, decimal cumCurrent)
+        public void toFile(double current, double voltage, double resistance, double power, double cumPower, double cumCurrent)
         {
             string path = LogPath;
             string filename = DateTime.Now.ToString("yyy-MM-dd") + "_reloadPro" + ".log";

@@ -74,10 +74,11 @@
             this.groupBox7 = new System.Windows.Forms.GroupBox();
             this.tbError = new System.Windows.Forms.TextBox();
             this.bgWorker = new System.ComponentModel.BackgroundWorker();
-            this.textBox2 = new System.Windows.Forms.TextBox();
+            this.tbLogPath = new System.Windows.Forms.TextBox();
             this.label9 = new System.Windows.Forms.Label();
             this.cbLog = new System.Windows.Forms.CheckBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.cbLogAppend = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
             this.gbOPMode.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -540,18 +541,18 @@
             // 
             this.bgWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bgWorker_DoWork);
             // 
-            // textBox2
+            // tbLogPath
             // 
-            this.textBox2.Location = new System.Drawing.Point(208, 22);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(345, 20);
-            this.textBox2.TabIndex = 12;
-            this.textBox2.Text = "C:\\Temp";
+            this.tbLogPath.Location = new System.Drawing.Point(247, 22);
+            this.tbLogPath.Name = "tbLogPath";
+            this.tbLogPath.Size = new System.Drawing.Size(306, 20);
+            this.tbLogPath.TabIndex = 12;
+            this.tbLogPath.Text = "C:\\Temp\\";
             // 
             // label9
             // 
             this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(152, 25);
+            this.label9.Location = new System.Drawing.Point(191, 25);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(50, 13);
             this.label9.TabIndex = 24;
@@ -560,17 +561,21 @@
             // cbLog
             // 
             this.cbLog.AutoSize = true;
+            this.cbLog.Checked = true;
+            this.cbLog.CheckState = System.Windows.Forms.CheckState.Checked;
             this.cbLog.Location = new System.Drawing.Point(19, 25);
             this.cbLog.Name = "cbLog";
             this.cbLog.Size = new System.Drawing.Size(65, 17);
             this.cbLog.TabIndex = 25;
             this.cbLog.Text = "Activate";
             this.cbLog.UseVisualStyleBackColor = true;
+            this.cbLog.CheckedChanged += new System.EventHandler(this.cbLog_CheckedChanged);
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.cbLogAppend);
             this.groupBox2.Controls.Add(this.cbLog);
-            this.groupBox2.Controls.Add(this.textBox2);
+            this.groupBox2.Controls.Add(this.tbLogPath);
             this.groupBox2.Controls.Add(this.label9);
             this.groupBox2.Location = new System.Drawing.Point(12, 543);
             this.groupBox2.Name = "groupBox2";
@@ -578,6 +583,18 @@
             this.groupBox2.TabIndex = 26;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Logging";
+            // 
+            // cbLogAppend
+            // 
+            this.cbLogAppend.AutoSize = true;
+            this.cbLogAppend.Checked = true;
+            this.cbLogAppend.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.cbLogAppend.Location = new System.Drawing.Point(102, 25);
+            this.cbLogAppend.Name = "cbLogAppend";
+            this.cbLogAppend.Size = new System.Drawing.Size(63, 17);
+            this.cbLogAppend.TabIndex = 26;
+            this.cbLogAppend.Text = "Append";
+            this.cbLogAppend.UseVisualStyleBackColor = true;
             // 
             // frmReload
             // 
@@ -664,10 +681,11 @@
         private System.Windows.Forms.TextBox tbResCalc;
         private System.Windows.Forms.Label label15;
         private System.ComponentModel.BackgroundWorker bgWorker;
-        private System.Windows.Forms.TextBox textBox2;
+        private System.Windows.Forms.TextBox tbLogPath;
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.CheckBox cbLog;
         private System.Windows.Forms.GroupBox groupBox2;
+        private System.Windows.Forms.CheckBox cbLogAppend;
     }
 }
 
