@@ -33,7 +33,8 @@ namespace ReloadClient
                     {
                         Logic.InputValue = Convert.ToInt32(tbSetValue.Text);
                     }
-                    FillForm(RMessage);
+                    bgWorker.ReportProgress(0, RMessage);
+                    //FillForm(RMessage);
                     if (doLog == true)
                     {
                         log.toFile(RMessage.CurrentMA, RMessage.VoltageMV, RMessage.Resistance, RMessage.PowerMW, Logic.CumulatedMWh, Logic.CumulatedMAh);
@@ -42,6 +43,11 @@ namespace ReloadClient
 
                 System.Threading.Thread.Sleep(100);
             }
+        }
+        private void bgWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        {
+            if (e.UserState is ReloadReceiveData)
+                FillForm(e.UserState as ReloadReceiveData);
         }
         #endregion
 
@@ -215,5 +221,7 @@ namespace ReloadClient
                 tbLogPath.Enabled = false;
             }
         }
+
+
     }
 }

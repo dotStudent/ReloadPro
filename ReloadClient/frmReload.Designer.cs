@@ -539,7 +539,9 @@
             // 
             // bgWorker
             // 
+            this.bgWorker.WorkerReportsProgress = true;
             this.bgWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bgWorker_DoWork);
+            this.bgWorker.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.bgWorker_ProgressChanged);
             // 
             // tbLogPath
             // 

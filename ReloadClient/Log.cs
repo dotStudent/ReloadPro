@@ -12,7 +12,7 @@ namespace ReloadClient
         public string LogPath { get; set; }
         public bool Append { get; set; }
 
-        private bool orgFileDeleted = false;
+        private bool firstrun = true;
         StreamWriter log;
 
         public void toFile(double current, double voltage, double resistance, double power, double cumPower, double cumCurrent)
@@ -21,7 +21,10 @@ namespace ReloadClient
             string filename = DateTime.Now.ToString("yyy-MM-dd") + "_reloadPro" + ".log";
             try
             {
-                PrepareFile(path, filename);
+                if (firstrun == true)
+                {
+                    PrepareFile(path, filename);
+                }
                 // Write to the file:
                 log.Write(DateTime.Now.ToString());
                 log.Write(";");
@@ -49,18 +52,24 @@ namespace ReloadClient
         {
             try
             {
+                firstrun = false;
                 log = new StreamWriter(path + file);
-                if (!File.Exists(path))
+                if (!Directory.Exists(path))
                 {
                     Directory.CreateDirectory(path);
                 }
-                if (Append == true && orgFileDeleted == false)
+                else
                 {
-                    File.Delete("path + filename");
-                    orgFileDeleted = true;
-                    log = File.AppendText(path + file);
-                    log.Write("DateTime;Current;Voltage;Resistance;Power;CumPower;CumMah");
-                    log.WriteLine();
+                    if (File.Exists(path + file) && Append == false)
+                    {
+                        File.Delete(path + file);
+                    }
+                    if (File.Exists(path + file) == false)
+                    {
+                        log = File.AppendText(path + file);
+                        log.Write("DateTime;Current;Voltage;Resistance;Power;CumPower;CumMah");
+                        log.WriteLine();
+                    }
                 }
             }
             catch (Exception exp)
