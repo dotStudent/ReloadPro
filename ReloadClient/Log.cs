@@ -13,7 +13,7 @@ namespace ReloadClient
         public bool Append { get; set; }
 
         private bool firstrun = true;
-        StreamWriter log;
+        
 
         public void toFile(double current, double voltage, double resistance, double power, double cumPower, double cumCurrent)
         {
@@ -26,6 +26,8 @@ namespace ReloadClient
                     PrepareFile(path, filename);
                 }
                 // Write to the file:
+                
+                StreamWriter log = new StreamWriter(path + filename, Append);
                 log.Write(DateTime.Now.ToString());
                 log.Write(";");
                 log.Write(current.ToString());
@@ -48,27 +50,27 @@ namespace ReloadClient
                 throw new System.Exception(exp.ToString());
             }
         }
-        private void PrepareFile(string path, string file)
+        private void PrepareFile(string path, string filename)
         {
             try
             {
                 firstrun = false;
-                log = new StreamWriter(path + file);
                 if (!Directory.Exists(path))
                 {
                     Directory.CreateDirectory(path);
                 }
                 else
                 {
-                    if (File.Exists(path + file) && Append == false)
+                    if (File.Exists(path + filename) && Append == false)
                     {
-                        File.Delete(path + file);
+                        File.Delete(path + filename);
                     }
-                    if (File.Exists(path + file) == false)
+                    if (File.Exists(path + filename) == false)
                     {
-                        log = File.AppendText(path + file);
+                        StreamWriter log = new StreamWriter(path + filename);
                         log.Write("DateTime;Current;Voltage;Resistance;Power;CumPower;CumMah");
                         log.WriteLine();
+                        log.Close();
                     }
                 }
             }

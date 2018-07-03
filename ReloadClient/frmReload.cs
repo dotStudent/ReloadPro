@@ -58,11 +58,13 @@ namespace ReloadClient
             {
                 Logic.InputValue = Convert.ToInt32(tbSetValue.Text);
                 Logic.SetInterval = Convert.ToInt32(tbSetInterval.Text);
+                Logic.OpMode = GetOpMode();
                 ConfigureLogging();
                 if (Helper.IsNumeric(tbShtdwnV.Text) == true)
                 {
                     Logic.ShutdownVoltageMV = Convert.ToInt32(tbShtdwnV.Text);
                 }
+                doLog = cbLog.Checked;
                 gbOPMode.Enabled = false;
                 Logic.Start();
                 bgWorker.RunWorkerAsync();
@@ -124,76 +126,95 @@ namespace ReloadClient
         {
             if (rd.MessageType == MsgType.Read)
             {
-                tbCRead.SafeInvoke(d => d.Text = rd.CurrentMA.ToString());
-                tbVRead.SafeInvoke(d => d.Text = rd.VoltageMV.ToString());
-                tbResCalc.SafeInvoke(d => d.Text = rd.Resistance.ToString());
+                //tbCRead.SafeInvoke(d => d.Text = rd.CurrentMA.ToString());
+                //tbVRead.SafeInvoke(d => d.Text = rd.VoltageMV.ToString());
+                //tbResCalc.SafeInvoke(d => d.Text = rd.Resistance.ToString());
+                tbCRead.Text = rd.CurrentMA.ToString();
+                tbVRead.Text = rd.VoltageMV.ToString();
+                tbResCalc.Text = rd.Resistance.ToString();
                 if (rd.PowerMW >= 1000)
                 {
                     if (lblUnitPCalc.Text != "W")
                     {
-                        lblUnitPCalc.SafeInvoke(d => d.Text = "W");
+                        //lblUnitPCalc.SafeInvoke(d => d.Text = "W");
+                       lblUnitPCalc.Text = "W";
                     }
-                    tbPowerCalc.SafeInvoke(d => d.Text = rd.PowerW.ToString());
+                    //tbPowerCalc.SafeInvoke(d => d.Text = rd.PowerW.ToString());
+                    tbPowerCalc.Text = rd.PowerW.ToString();
                 }
                 else
                 {
                     if (lblUnitPCalc.Text != "mW")
                     {
-                        lblUnitPCalc.SafeInvoke(d => d.Text = "mW");
+                        //lblUnitPCalc.SafeInvoke(d => d.Text = "mW");
+                        lblUnitPCalc.Text = "mW";
                     }
-                    tbPowerCalc.SafeInvoke(d => d.Text = rd.PowerMW.ToString());
+                    //tbPowerCalc.SafeInvoke(d => d.Text = rd.PowerMW.ToString());
+                    tbPowerCalc.Text = rd.PowerMW.ToString();
                 }
                 if (Logic.CumulatedMWh >= 1000)
                 {
                     if (lblUnitWhCalc.Text != "Wh")
                     {
-                        lblUnitWhCalc.SafeInvoke(d => d.Text = "Wh");
+                        //lblUnitWhCalc.SafeInvoke(d => d.Text = "Wh");
+                        lblUnitWhCalc.Text = "Wh";
                     }
-                    tbWhCalc.SafeInvoke(d => d.Text = Logic.CumulatedWh.ToString());
+                    //tbWhCalc.SafeInvoke(d => d.Text = Logic.CumulatedWh.ToString());
+                    tbWhCalc.Text = Logic.CumulatedWh.ToString();
                 }
                 else
                 {
                     if (lblUnitWhCalc.Text != "mWh")
                     {
-                        lblUnitWhCalc.SafeInvoke(d => d.Text = "mWh");
+                        //lblUnitWhCalc.SafeInvoke(d => d.Text = "mWh");
+                        lblUnitWhCalc.Text = "mWh";
                     }
-                    tbWhCalc.SafeInvoke(d => d.Text = Logic.CumulatedMAh.ToString());
+                    //tbWhCalc.SafeInvoke(d => d.Text = Logic.CumulatedMAh.ToString());
+                    tbWhCalc.Text = Logic.CumulatedMAh.ToString();
                 }
                 if (Logic.CumulatedMAh >= 1000)
                 {
                     if (lblUnitAhCalc.Text != "Ah")
                     {
-                        lblUnitAhCalc.SafeInvoke(d => d.Text = "Ah");
+                        //lblUnitAhCalc.SafeInvoke(d => d.Text = "Ah");
+                        lblUnitAhCalc.Text = "Ah";
                     }
-                    tbAhCalc.SafeInvoke(d => d.Text = Logic.CumulatedAh.ToString());
+                    //tbAhCalc.SafeInvoke(d => d.Text = Logic.CumulatedAh.ToString());
+                    tbAhCalc.Text = Logic.CumulatedAh.ToString();
                 }
                 else
                 {
                     if (lblUnitWhCalc.Text != "mAh")
                     {
-                        lblUnitAhCalc.SafeInvoke(d => d.Text = "mAh");
+                        //lblUnitAhCalc.SafeInvoke(d => d.Text = "mAh");
+                        lblUnitAhCalc.Text = "mAh";
                     }
-                    tbAhCalc.SafeInvoke(d => d.Text = Logic.CumulatedMAh.ToString());
+                    //tbAhCalc.SafeInvoke(d => d.Text = Logic.CumulatedMAh.ToString());
+                    tbAhCalc.Text = Logic.CumulatedMAh.ToString();
                 }
-                tbAhCalc.SafeInvoke(d => d.Text = Logic.CumulatedMAh.ToString());
+                //tbAhCalc.SafeInvoke(d => d.Text = Logic.CumulatedMAh.ToString());
+                tbAhCalc.Text = Logic.CumulatedMAh.ToString();
             }
             //Log Windows
             if (rd.MessageType == MsgType.Read)
             {
-                //tbMessage.SafeInvoke(d => d.Text = tbMessage.Text + Environment.NewLine + rd.CurrentMA + ", " + rd.VoltageMV);
-                tbMessage.SafeInvoke(d => d.Text = "Read: " + rd.CurrentMA + ", " + rd.VoltageMV);
+                //tbMessage.SafeInvoke(d => d.Text = "Read: " + rd.CurrentMA + ", " + rd.VoltageMV);
+                tbMessage.AppendText("Read: " + rd.CurrentMA + ", " + rd.VoltageMV + Environment.NewLine);
             }
             else if (rd.MessageType == MsgType.Set)
             {
-                tbMessage.SafeInvoke(d => d.Text = "Set: " + rd.CurrentMA);
+                //tbMessage.SafeInvoke(d => d.Text = "Set: " + rd.CurrentMA);
+                tbMessage.AppendText("Set: " + rd.CurrentMA + Environment.NewLine);
             }
             else if (rd.MessageType == MsgType.Error)
             {
-                tbError.SafeInvoke(d => d.Text = "Error: " + rd.Error);
+                //tbError.SafeInvoke(d => d.Text = "Error: " + rd.Error);
+                tbError.AppendText("Error: " + rd.Error + Environment.NewLine);
             }
             else
             {
-                tbError.SafeInvoke(d => d.Text = "Unknown: " + rd.Error);
+                //tbError.SafeInvoke(d => d.Text = "Unknown: " + rd.Error);
+                tbError.AppendText("Unknown: " + rd.Error);
             }
         }
         private void ConfigureLogging()
@@ -204,24 +225,25 @@ namespace ReloadClient
                     log.Append = cbLogAppend.Checked;
             }
         }
-        #endregion
-
-        private void cbLog_CheckedChanged(object sender, EventArgs e)
+        private OperationsMode GetOpMode()
         {
-            if (cbLog.Checked == true)
+            if (rBtnCP.Checked)
             {
-                doLog = true;
-                cbLogAppend.Enabled = true;
-                tbLogPath.Enabled = true;
+                return OperationsMode.ConstantPower;
+            }
+            else if (rBtnCV.Checked)
+            {
+                return OperationsMode.ConstantVoltage;
+            }
+            else if (rBtnCR.Checked)
+            {
+                return OperationsMode.ConstantResistance;
             }
             else
             {
-                doLog = false;
-                cbLogAppend.Enabled = false;
-                tbLogPath.Enabled = false;
+                return OperationsMode.ConstantCurrent;
             }
         }
-
-
+        #endregion
     }
 }

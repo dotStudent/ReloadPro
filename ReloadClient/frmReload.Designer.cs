@@ -571,7 +571,6 @@
             this.cbLog.TabIndex = 25;
             this.cbLog.Text = "Activate";
             this.cbLog.UseVisualStyleBackColor = true;
-            this.cbLog.CheckedChanged += new System.EventHandler(this.cbLog_CheckedChanged);
             // 
             // groupBox2
             // 

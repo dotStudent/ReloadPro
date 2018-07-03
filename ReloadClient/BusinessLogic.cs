@@ -17,7 +17,7 @@ namespace ReloadClient
         public bool Stop { get; set; } = true;
         public bool Stopped { get; private set; } = true;
         public OperationsMode OpMode { get; set; }
-        public int InputValue { get; set; }
+        public Double InputValue { get; set; }
         public int ShutdownVoltageMV { get; set; }
         public Double CumulatedMAh { get { return Math.Round(CumMAh, 4); } }
         public Double CumulatedAh { get { return Math.Round(CumulatedMAh / 1000, 2); } }
@@ -31,12 +31,11 @@ namespace ReloadClient
         #endregion
 
         private SerialPort ComPort;
-        private int SetValue;
-        private int OldInputValue;
+        private Double SetValue;
+        private Double OldInputValue;
         private double LastMVoltage;
         private double LastMAmpere;
         private double LastResistance;
-        private bool firstRun = true;
         private Double CumMAh;
         private Double CumMWh;
 
@@ -54,7 +53,6 @@ namespace ReloadClient
                 OldInputValue = InputValue;
                 SetValue = InputValue;
                 ComPort.WriteLine("set " + CalcFirstInputValue());
-                firstRun = false;
                 Stop = false;
                 ComPort.WriteLine("monitor " + SetInterval);
             }
@@ -86,21 +84,23 @@ namespace ReloadClient
                 {
                     StopIt();
                 }
-                int newValue = CalcSetValue(); //check next Current Value to Set
-                if (InputValue != OldInputValue) // Check if user Changed Input Value
+                double newValue = Math.Round(CalcSetValue(),0); //check next Current Value to Set
+                if (newValue != OldInputValue) // Check if user Changed Input Value
                 {
+                    InputValue = newValue;
                     OldInputValue = InputValue;
-                    newValue = InputValue;
+                    ComPort.WriteLine("set " + Math.Round(newValue, 0));
+
                 }
 
 
-                if (newValue != -1)
-                {
-                    ComPort.WriteLine("set " + newValue);
-                }
+                //if (newValue != -1)
+                //{
+                //    ComPort.WriteLine("set " + Math.Round(newValue,0));
+                //}
             }
         }
-        private int CalcFirstInputValue()
+        private Double CalcFirstInputValue()
         {
             if (OpMode == OperationsMode.ConstantCurrent)
             {
@@ -111,27 +111,28 @@ namespace ReloadClient
                 return 0; //Set MinCurrent To GetFirstVoltageValue
             }
         }
-        private int CalcSetValue()
+        private double CalcSetValue()
         {
             if (OpMode == OperationsMode.ConstantVoltage)
             {
                 if (LastMVoltage != SetValue)
                 {
-                    return Convert.ToInt32(SetValue / LastResistance);
+                    return Convert.ToDouble(SetValue / LastResistance);
                 }
             }
             else if (OpMode == OperationsMode.ConstantResistance)
             {
                 if (LastResistance != SetValue)
                 {
-                    return Convert.ToInt32(LastMVoltage / SetValue);
+                    return Convert.ToDouble(LastMVoltage / SetValue/1000);
                 }
             }
             else if (OpMode == OperationsMode.ConstantPower)
             {
-                if (SetValue != (LastMVoltage * LastMAmpere ))
+                if (SetValue != (LastMVoltage/1000 * LastMAmpere ))
                 {
-                    return Convert.ToInt32(SetValue / LastMVoltage);
+                    double val = Convert.ToInt32(SetValue / (LastMVoltage / 1000)*1000);
+                    return Convert.ToDouble(SetValue / (LastMVoltage/1000)*1000);
                 }
             }
             return -1;
