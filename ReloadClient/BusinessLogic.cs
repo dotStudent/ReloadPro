@@ -11,10 +11,10 @@ namespace ReloadClient
     {
         #region Getter/Setter
         public int Baudrate { get; set; } = 115200;
-        public string[] SerialPorts { get { return Serial.GetPorts(); } }
+        
         public string SetPort { get; set; }
         public int SetInterval { get; set; }
-        public bool Stop { get; set; } = true;
+        //public bool Stop { get; set; } = true;
         public bool Stopped { get; private set; } = true;
         public OperationsMode OpMode { get; set; }
         public Double InputValue { get; set; }
@@ -23,14 +23,18 @@ namespace ReloadClient
         public Double CumulatedAh { get { return Math.Round(CumulatedMAh / 1000, 2); } }
         public Double CumulatedMWh { get { return Math.Round(CumMWh, 4); } }
         public Double CumulatedWh { get { return Math.Round(CumulatedMWh / 1000, 2); } }
+        private SerialPort ComPort;
+        public bool doLog { get; set;} =false;
+        public string logPath { get; set; }
+        public bool appendLogFile { get; set; } = true;
         #endregion
 
         #region Queues
         public Queue<ReloadReceiveData> ReadMessageQueue;
-        //public Queue<ReloadSendData> WriteMessageQueue;
         #endregion
+        
 
-        private SerialPort ComPort;
+        
         private Double SetValue;
         private Double OldInputValue;
         private double LastMVoltage;
@@ -38,31 +42,35 @@ namespace ReloadClient
         private double LastResistance;
         private Double CumMAh;
         private Double CumMWh;
-
+        Log log = new Log();
+        
         #region Public Methods
         public void Start()
         {
             ReadMessageQueue = new Queue<ReloadReceiveData>();
             ComPort = new SerialPort();
-            if (SerialPorts.Contains(SetPort))
+            if (ReloadSerial.SerialPorts.Contains(SetPort))
             {
+                log.LogPath = logPath;
                 ComPort.PortName = SetPort;
                 ComPort.BaudRate = Baudrate;
                 ComPort.Open();
                 ComPort.DataReceived += new SerialDataReceivedEventHandler(ComPort_DataReceived);
-                OldInputValue = InputValue;
                 SetValue = InputValue;
-                ComPort.WriteLine("set " + CalcFirstInputValue());
-                Stop = false;
+                //ComPort.WriteLine("reset");
+                //ComPort.WriteLine("on");
+                //ComPort.Write("uvlo " + ShutdownVoltageMV);
                 ComPort.WriteLine("monitor " + SetInterval);
             }
         }
         public void StopIt()
         {
-            if (ComPort != null)
+            if (ComPort != null && ComPort.IsOpen == true)
             {
-                ComPort.WriteLine("set " + "0");
+                ComPort.WriteLine("set 0");
+                OldInputValue = 0;
                 Stopped = true;
+                ComPort.Close();
             }
         }
         #endregion
@@ -72,43 +80,26 @@ namespace ReloadClient
         {
             ReloadReceiveData rd = new ReloadReceiveData(ComPort.ReadLine());
             ReadMessageQueue.Enqueue(rd);
+
             LastMAmpere = rd.CurrentMA;
             LastMVoltage = rd.VoltageMV;
             LastResistance = rd.Resistance;
             CumMWh += GetHourlyValues(rd.PowerMW);
             CumMAh += GetHourlyValues(rd.CurrentMA);
+            if (doLog == true)
+            {
+                log.toFile(rd.TimeStamp, rd.CurrentMA, rd.VoltageMV, rd.Resistance, rd.PowerMW, this.CumulatedMWh, this.CumulatedMAh);
+            }
 
             if (rd.MessageType == MsgType.Read)
             {
-                if (ShutdownVoltageMV >= LastMVoltage || Stop == true)
-                {
-                    StopIt();
-                }
                 double newValue = Math.Round(CalcSetValue(),0); //check next Current Value to Set
                 if (newValue != OldInputValue) // Check if user Changed Input Value
                 {
                     InputValue = newValue;
                     OldInputValue = InputValue;
                     ComPort.WriteLine("set " + Math.Round(newValue, 0));
-
                 }
-
-
-                //if (newValue != -1)
-                //{
-                //    ComPort.WriteLine("set " + Math.Round(newValue,0));
-                //}
-            }
-        }
-        private Double CalcFirstInputValue()
-        {
-            if (OpMode == OperationsMode.ConstantCurrent)
-            {
-                return InputValue;
-            }
-            else
-            {
-                return 0; //Set MinCurrent To GetFirstVoltageValue
             }
         }
         private double CalcSetValue()
@@ -117,7 +108,14 @@ namespace ReloadClient
             {
                 if (LastMVoltage != SetValue)
                 {
-                    return Convert.ToDouble(SetValue / LastResistance);
+                    if (LastResistance != 0)
+                    {
+                        return Convert.ToDouble((SetValue * 1000) / LastResistance);
+                    }
+                    else
+                    {
+                        return 10;
+                    }
                 }
             }
             else if (OpMode == OperationsMode.ConstantResistance)
@@ -129,13 +127,14 @@ namespace ReloadClient
             }
             else if (OpMode == OperationsMode.ConstantPower)
             {
-                if (SetValue != (LastMVoltage/1000 * LastMAmpere ))
+                if (InputValue != (LastMVoltage/1000 * LastMAmpere ))
                 {
-                    double val = Convert.ToInt32(SetValue / (LastMVoltage / 1000)*1000);
-                    return Convert.ToDouble(SetValue / (LastMVoltage/1000)*1000);
+                    double val = Convert.ToInt32(InputValue / (LastMVoltage / 1000)*1000);
+                    return Convert.ToDouble(InputValue / (LastMVoltage/1000)*1000);
                 }
             }
-            return -1;
+            return SetValue;
+
             
             //Calc new Value for various Operation Modes
         }

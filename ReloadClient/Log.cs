@@ -11,11 +11,10 @@ namespace ReloadClient
     {
         public string LogPath { get; set; }
         public bool Append { get; set; }
-
         private bool firstrun = true;
-        
 
-        public void toFile(double current, double voltage, double resistance, double power, double cumPower, double cumCurrent)
+
+        public void toFile(DateTime timeStamp, double current, double voltage, double resistance, double power, double cumPower, double cumCurrent)
         {
             string path = LogPath;
             string filename = DateTime.Now.ToString("yyy-MM-dd") + "_reloadPro" + ".log";
@@ -27,8 +26,8 @@ namespace ReloadClient
                 }
                 // Write to the file:
                 
-                StreamWriter log = new StreamWriter(path + filename, Append);
-                log.Write(DateTime.Now.ToString());
+                StreamWriter log = new StreamWriter(path + filename, true);
+                log.Write(timeStamp.ToString());
                 log.Write(";");
                 log.Write(current.ToString());
                 log.Write(";");
@@ -41,7 +40,6 @@ namespace ReloadClient
                 log.Write(cumPower.ToString());
                 log.Write(";");
                 log.Write(cumCurrent.ToString());
-                log.Write(";");
                 log.WriteLine();
                 log.Close();
             }

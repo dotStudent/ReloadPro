@@ -19,10 +19,10 @@ namespace ReloadClient
         const int maxVoltage = 60;
 
         //Resistance Ohm
-        const int minResistance = 10000;
+        const int minResistance = 1000;
 
-        //Power mW
-        const int maxPower = 25000;
+        //Power W
+        const int maxPower = 25;
 
         static int TimeLimit(int value)
         {

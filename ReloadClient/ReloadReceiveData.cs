@@ -19,7 +19,7 @@ namespace ReloadClient
             {
                 if (VoltageMV > 0)
                 {
-                    return Math.Round(CurrentMA / VoltageMV, 2);
+                    return Math.Round(VoltageMV / CurrentMA, 2);
                 }
                 else
                 {

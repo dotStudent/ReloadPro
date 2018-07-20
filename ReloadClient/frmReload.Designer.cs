@@ -28,11 +28,14 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.cbPorts = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
             this.btnStart = new System.Windows.Forms.Button();
             this.btnStop = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.lblVersion = new System.Windows.Forms.Label();
+            this.label11 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.tbSetInterval = new System.Windows.Forms.TextBox();
@@ -79,6 +82,7 @@
             this.cbLog = new System.Windows.Forms.CheckBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.cbLogAppend = new System.Windows.Forms.CheckBox();
+            this.versionTimer = new System.Windows.Forms.Timer(this.components);
             this.groupBox1.SuspendLayout();
             this.gbOPMode.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -109,9 +113,9 @@
             // 
             // btnStart
             // 
-            this.btnStart.Location = new System.Drawing.Point(365, 30);
+            this.btnStart.Location = new System.Drawing.Point(368, 15);
             this.btnStart.Name = "btnStart";
-            this.btnStart.Size = new System.Drawing.Size(64, 23);
+            this.btnStart.Size = new System.Drawing.Size(68, 23);
             this.btnStart.TabIndex = 2;
             this.btnStart.Text = "Start";
             this.btnStart.UseVisualStyleBackColor = true;
@@ -119,7 +123,7 @@
             // 
             // btnStop
             // 
-            this.btnStop.Location = new System.Drawing.Point(446, 30);
+            this.btnStop.Location = new System.Drawing.Point(368, 44);
             this.btnStop.Name = "btnStop";
             this.btnStop.Size = new System.Drawing.Size(68, 23);
             this.btnStop.TabIndex = 3;
@@ -129,6 +133,8 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.lblVersion);
+            this.groupBox1.Controls.Add(this.label11);
             this.groupBox1.Controls.Add(this.label3);
             this.groupBox1.Controls.Add(this.label2);
             this.groupBox1.Controls.Add(this.tbSetInterval);
@@ -142,6 +148,24 @@
             this.groupBox1.TabIndex = 4;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Serial Connection";
+            // 
+            // lblVersion
+            // 
+            this.lblVersion.AutoSize = true;
+            this.lblVersion.Location = new System.Drawing.Point(498, 15);
+            this.lblVersion.Name = "lblVersion";
+            this.lblVersion.Size = new System.Drawing.Size(52, 13);
+            this.lblVersion.TabIndex = 8;
+            this.lblVersion.Text = "lblVersion";
+            // 
+            // label11
+            // 
+            this.label11.AutoSize = true;
+            this.label11.Location = new System.Drawing.Point(455, 15);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(45, 13);
+            this.label11.TabIndex = 7;
+            this.label11.Text = "Version:";
             // 
             // label3
             // 
@@ -192,6 +216,7 @@
             this.rBtnCR.TabIndex = 3;
             this.rBtnCR.Text = "Constant Resistance";
             this.rBtnCR.UseVisualStyleBackColor = true;
+            this.rBtnCR.CheckedChanged += new System.EventHandler(this.rBtn_CheckedChanged);
             // 
             // rBtnCP
             // 
@@ -202,6 +227,7 @@
             this.rBtnCP.TabIndex = 2;
             this.rBtnCP.Text = "Constant Power";
             this.rBtnCP.UseVisualStyleBackColor = true;
+            this.rBtnCP.CheckedChanged += new System.EventHandler(this.rBtn_CheckedChanged);
             // 
             // rBtnCV
             // 
@@ -212,6 +238,7 @@
             this.rBtnCV.TabIndex = 1;
             this.rBtnCV.Text = "Constant Voltage";
             this.rBtnCV.UseVisualStyleBackColor = true;
+            this.rBtnCV.CheckedChanged += new System.EventHandler(this.rBtn_CheckedChanged);
             // 
             // rBtnCC
             // 
@@ -224,6 +251,7 @@
             this.rBtnCC.TabStop = true;
             this.rBtnCC.Text = "Constant Current";
             this.rBtnCC.UseVisualStyleBackColor = true;
+            this.rBtnCC.CheckedChanged += new System.EventHandler(this.rBtn_CheckedChanged);
             // 
             // tbSetValue
             // 
@@ -540,6 +568,7 @@
             // bgWorker
             // 
             this.bgWorker.WorkerReportsProgress = true;
+            this.bgWorker.WorkerSupportsCancellation = true;
             this.bgWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bgWorker_DoWork);
             this.bgWorker.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.bgWorker_ProgressChanged);
             // 
@@ -596,6 +625,10 @@
             this.cbLogAppend.TabIndex = 26;
             this.cbLogAppend.Text = "Append";
             this.cbLogAppend.UseVisualStyleBackColor = true;
+            // 
+            // versionTimer
+            // 
+            this.versionTimer.Tick += new System.EventHandler(this.versionTimer_Tick);
             // 
             // frmReload
             // 
@@ -687,6 +720,9 @@
         private System.Windows.Forms.CheckBox cbLog;
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.CheckBox cbLogAppend;
+        private System.Windows.Forms.Label lblVersion;
+        private System.Windows.Forms.Label label11;
+        private System.Windows.Forms.Timer versionTimer;
     }
 }
 

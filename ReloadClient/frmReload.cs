@@ -15,10 +15,24 @@ namespace ReloadClient
         private BusinessLogic Logic;
         private Log log = new Log();
         private bool doLog = false;
+        private string vers;
+        public string version
+        {
+            get
+            {
+                return vers;
+            }
+            set
+            {
+                vers = value;
+                lblVersion.Text = vers;
+            }
+        }
 
         public frmReload()
         {
             InitializeComponent();
+            lblVersion.Text = "";
         }
 
         #region BackGroundWorker
@@ -35,10 +49,6 @@ namespace ReloadClient
                     }
                     bgWorker.ReportProgress(0, RMessage);
                     //FillForm(RMessage);
-                    if (doLog == true)
-                    {
-                        log.toFile(RMessage.CurrentMA, RMessage.VoltageMV, RMessage.Resistance, RMessage.PowerMW, Logic.CumulatedMWh, Logic.CumulatedMAh);
-                    }
                 }
 
                 System.Threading.Thread.Sleep(100);
@@ -65,6 +75,7 @@ namespace ReloadClient
                     Logic.ShutdownVoltageMV = Convert.ToInt32(tbShtdwnV.Text);
                 }
                 doLog = cbLog.Checked;
+                Logic.logPath = tbLogPath.Text;
                 gbOPMode.Enabled = false;
                 Logic.Start();
                 bgWorker.RunWorkerAsync();
@@ -86,7 +97,7 @@ namespace ReloadClient
         private void frmReload_Load(object sender, EventArgs e)
         {
             Logic = new BusinessLogic();
-            cbPorts.DataSource = Serial.GetPorts();
+            cbPorts.DataSource = ReloadSerial.SerialPorts;
         }
         private void frmReload_FormClosing(object sender, FormClosingEventArgs e)
         {
@@ -96,10 +107,40 @@ namespace ReloadClient
         private void cbPorts_SelectedIndexChanged(object sender, EventArgs e)
         {
             Logic.SetPort = cbPorts.SelectedItem.ToString();
+            if (ReloadSerial.GetVersion == null)
+            {
+                ReloadSerial.ReadVersion();
+            }
+            lblVersion.Text = "";
+            versionTimer.Start();
+
+        }
+        private void rBtn_CheckedChanged(object sender, EventArgs e)
+        {
+            if (rBtnCC.Checked)
+            {
+                lblUnit.Text = "mA";
+                tbSetValue.Text = "50";
+            }
+            else if (rBtnCP.Checked)
+            {
+                lblUnit.Text = "W";
+                tbSetValue.Text = "1";
+            }
+            else if (rBtnCV.Checked)
+            {
+                lblUnit.Text = "mV";
+                tbSetValue.Text = "100";
+            }
+            else if (rBtnCR.Checked)
+            {
+                lblUnit.Text = "Ω";
+                tbSetValue.Text = "100";
+            }
         }
         #endregion
 
-        #region Helper
+        #region Private Methods
         private void InitializeAndCheck()
         {
             #region SetOperationsMode
@@ -126,9 +167,6 @@ namespace ReloadClient
         {
             if (rd.MessageType == MsgType.Read)
             {
-                //tbCRead.SafeInvoke(d => d.Text = rd.CurrentMA.ToString());
-                //tbVRead.SafeInvoke(d => d.Text = rd.VoltageMV.ToString());
-                //tbResCalc.SafeInvoke(d => d.Text = rd.Resistance.ToString());
                 tbCRead.Text = rd.CurrentMA.ToString();
                 tbVRead.Text = rd.VoltageMV.ToString();
                 tbResCalc.Text = rd.Resistance.ToString();
@@ -136,93 +174,77 @@ namespace ReloadClient
                 {
                     if (lblUnitPCalc.Text != "W")
                     {
-                        //lblUnitPCalc.SafeInvoke(d => d.Text = "W");
                        lblUnitPCalc.Text = "W";
                     }
-                    //tbPowerCalc.SafeInvoke(d => d.Text = rd.PowerW.ToString());
                     tbPowerCalc.Text = rd.PowerW.ToString();
                 }
                 else
                 {
                     if (lblUnitPCalc.Text != "mW")
                     {
-                        //lblUnitPCalc.SafeInvoke(d => d.Text = "mW");
                         lblUnitPCalc.Text = "mW";
                     }
-                    //tbPowerCalc.SafeInvoke(d => d.Text = rd.PowerMW.ToString());
                     tbPowerCalc.Text = rd.PowerMW.ToString();
                 }
                 if (Logic.CumulatedMWh >= 1000)
                 {
                     if (lblUnitWhCalc.Text != "Wh")
                     {
-                        //lblUnitWhCalc.SafeInvoke(d => d.Text = "Wh");
                         lblUnitWhCalc.Text = "Wh";
                     }
-                    //tbWhCalc.SafeInvoke(d => d.Text = Logic.CumulatedWh.ToString());
                     tbWhCalc.Text = Logic.CumulatedWh.ToString();
                 }
                 else
                 {
                     if (lblUnitWhCalc.Text != "mWh")
                     {
-                        //lblUnitWhCalc.SafeInvoke(d => d.Text = "mWh");
                         lblUnitWhCalc.Text = "mWh";
                     }
-                    //tbWhCalc.SafeInvoke(d => d.Text = Logic.CumulatedMAh.ToString());
                     tbWhCalc.Text = Logic.CumulatedMAh.ToString();
                 }
                 if (Logic.CumulatedMAh >= 1000)
                 {
                     if (lblUnitAhCalc.Text != "Ah")
                     {
-                        //lblUnitAhCalc.SafeInvoke(d => d.Text = "Ah");
                         lblUnitAhCalc.Text = "Ah";
                     }
-                    //tbAhCalc.SafeInvoke(d => d.Text = Logic.CumulatedAh.ToString());
                     tbAhCalc.Text = Logic.CumulatedAh.ToString();
                 }
                 else
                 {
                     if (lblUnitWhCalc.Text != "mAh")
                     {
-                        //lblUnitAhCalc.SafeInvoke(d => d.Text = "mAh");
                         lblUnitAhCalc.Text = "mAh";
                     }
-                    //tbAhCalc.SafeInvoke(d => d.Text = Logic.CumulatedMAh.ToString());
                     tbAhCalc.Text = Logic.CumulatedMAh.ToString();
                 }
-                //tbAhCalc.SafeInvoke(d => d.Text = Logic.CumulatedMAh.ToString());
                 tbAhCalc.Text = Logic.CumulatedMAh.ToString();
             }
             //Log Windows
             if (rd.MessageType == MsgType.Read)
             {
-                //tbMessage.SafeInvoke(d => d.Text = "Read: " + rd.CurrentMA + ", " + rd.VoltageMV);
                 tbMessage.AppendText("Read: " + rd.CurrentMA + ", " + rd.VoltageMV + Environment.NewLine);
             }
             else if (rd.MessageType == MsgType.Set)
             {
-                //tbMessage.SafeInvoke(d => d.Text = "Set: " + rd.CurrentMA);
                 tbMessage.AppendText("Set: " + rd.CurrentMA + Environment.NewLine);
             }
             else if (rd.MessageType == MsgType.Error)
             {
-                //tbError.SafeInvoke(d => d.Text = "Error: " + rd.Error);
                 tbError.AppendText("Error: " + rd.Error + Environment.NewLine);
             }
             else
             {
-                //tbError.SafeInvoke(d => d.Text = "Unknown: " + rd.Error);
                 tbError.AppendText("Unknown: " + rd.Error);
             }
         }
         private void ConfigureLogging()
         {
             if (cbLog.Checked == true)
-            { 
-                    log.LogPath = tbLogPath.Text;
-                    log.Append = cbLogAppend.Checked;
+            {
+                Logic.doLog = cbLog.Checked;
+                Logic.logPath = tbLogPath.Text;
+                Logic.appendLogFile = cbLogAppend.Checked;
             }
         }
         private OperationsMode GetOpMode()
@@ -242,6 +264,23 @@ namespace ReloadClient
             else
             {
                 return OperationsMode.ConstantCurrent;
+            }
+        }
+        private void versionTimer_Tick(object sender, EventArgs e)
+        {
+            string port = ReloadSerial.SetPort;
+            if (port != "")
+            {
+                versionTimer.Stop();
+                lblVersion.Text = vers;
+                for (int i = 0; i < cbPorts.Items.Count; i++)
+                {
+                    if ((string)cbPorts.Items[i] == ReloadSerial.SetPort)
+                    {
+                        cbPorts.SelectedItem = cbPorts.Items[i];
+                        lblVersion.Text = ReloadSerial.GetVersion;
+                    }
+                }
             }
         }
         #endregion

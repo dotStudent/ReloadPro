@@ -60,7 +60,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ReloadReceiveData.cs" />
-    <Compile Include="Serial.cs" />
+    <Compile Include="ReloadSerial.cs" />
     <EmbeddedResource Include="frmReload.resx">
       <DependentUpon>frmReload.cs</DependentUpon>
     </EmbeddedResource>
